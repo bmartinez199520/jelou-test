@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+dist
+.git
+.github
+#.env
+#.env.*
+#!.env.example
+coverage
+.vscode
+.idea
+logs
+*.log
+mysql_data/
+redis_data/
+mongodb_data/

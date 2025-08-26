@@ -1,93 +1,161 @@
-# Backend_Developer_NestJS_02
+# API de Gestión de Tareas con NestJS
 
-Welcome to the technical test for the NestJS Backend Developer position! In this test, we assess your skills in developing applications using NestJS, with a specific focus on various technical and best practice aspects.
+API RESTful desarrollada con NestJS para la gestión de tareas, con autenticación JWT, caché Redis y persistencia en MySQL.
 
-## Project Description
+## Características
 
-The goal of this project is to build a backend service for a to-do list application using **NestJS**. The service must be dockerized, follow strict linting rules, include database connections, logging (both to files and MongoDB), and use other advanced components provided by the framework.
+- ✅ CRUD completo para tareas
+- 🔒 Autenticación con JWT
+- 🗄️ Persistencia en MySQL
+- 📝 Soft delete y restauración de tareas
+- 🚀 Caché con Redis
+- 📊 Paginación y filtrado
+- 📚 Documentación con Swagger
 
-## Technical Requirements
+## Requisitos previos
 
-The application must be developed using the following technologies:
+- Node.js (v18 o superior)
+- Docker y Docker Compose
+- Git
 
-- Framework: NestJS.
-- Programming language: TypeScript.
-- Database: MySQL for data persistence.
-- Docker: The application must be dockerized.
+## Instalación y configuración
 
-The project must include:
+### 1. Clonar el repositorio
 
-- A controller to manage CRUD operations of the tasks.
-- A service that handles the business logic related to the tasks.
-- Validations for input data in requests using DTOs.
-- Middleware for logging HTTP requests.
-- Logging system with support for files and MongoDB.
-- Caching for the most accessed endpoints using Redis.
-- Rate limiting on the API endpoints.
-- Unit and integration tests with at least 80% coverage.
-- API documentation using the Swagger module (optional).
+```bash
+git clone <url-del-repositorio>
+cd Nestjs-Test-02
+```
 
-### API Endpoints
+### 2. Variables de entorno
 
-#### Task Management
+Copia el archivo de ejemplo y configura tus variables:
 
-- **POST** `/tasks`: Create a new task.
-- **GET** `/tasks`: Retrieve all tasks with the ability to filter by status (completed, pending).
-- **GET** `/tasks/:id`: Retrieve a specific task by ID.
-- **PUT** `/tasks/:id`: Update an existing task (title, description, status).
-- **DELETE** `/tasks/:id`: Delete a task by ID.
+```bash
+cp .env.example .env
+```
 
-#### Task Status
+Edita el archivo `.env` con tus configuraciones.
 
-- Mark tasks as completed or pending.
-- Include a counter indicating how many tasks are completed and how many are pending.
+### 3. Iniciar con Docker Compose
 
-### Dockerization
+La forma más sencilla de ejecutar el proyecto es usando Docker Compose:
 
-- Provide a `Dockerfile` file to build the NestJS application Docker image.
-- Provide a `docker-compose.yml` file for local deployment of the service.
+```bash
+docker compose up -d
+```
 
-### Logging
+Esto iniciará:
+- API NestJS en el puerto 3000
+- MySQL en el puerto 3306
+- Redis en el puerto 6379
+- MongoDB en el puerto 27017
 
-- Implement a full-featured logging system:
-  - **File-based logging:** Log all HTTP requests and responses.
-  - **MongoDB logging:** Save application logs (e.g. errors, important events) to MongoDB.
-- Integrate **Winston** or another logging library that supports multiple transports.
+### 4. Instalación manual (alternativa)
 
-### Security
+Si prefieres ejecutar la aplicación localmente:
 
-- Implement **JWT**-based authentication and secure API endpoints.
-- Protect sensitive data (e.g. database credentials) using environment variables and make sure they are not exposed.
+```bash
+# Instalar dependencias
+npm install
 
-### Extras
+# Iniciar en modo desarrollo
+npm run start:dev
 
-- Implement a metrics endpoint to monitor API performance (e.g. using **Prometheus** or similar).
-- Add pagination support for the `GET /tasks` endpoint when there are more than 10 tasks.
+# Iniciar en modo producción
+npm run start:prod
+```
 
-## Aspects to Evaluate
+## Endpoints de la API
 
-During your project review, we will focus on the following aspects:
+### Autenticación
 
-1. **Working Correctly:** We will verify that the application meets the requirements and works correctly.
-2. **Efficiency:** We will evaluate the efficiency of the code, including performance and resource management.
-3. **Code Readability:** We will review the code for readability, clarity in structure, and consistency in naming conventions.
-4. **Formatting and Code Style:** We will verify the use of tools such as linter to maintain consistent and prettier code formatting.
-5. **Project Organization:** Evaluate the structure and organization of the source code.
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/auth/login` | Iniciar sesión y obtener token JWT |
 
-## Tasks to Perform
+**Ejemplo de solicitud:**
+```json
+{
+  "email": "usuario@ejemplo.com",
+  "password": "contraseña"
+}
+```
 
-1. Implement the task management service with the functionalities described above.
-2. Create a `Dockerfile` file to build the Docker image of the application.
-3. Create a `docker-compose.yml` file for local deployment of the service.
-4. Perform a code review to evaluate the quality of the code readability.
-5. Use a linter and prettier to ensure the quality and style of the code.
-6. Verify the correct operation of the application.
+### Usuarios
 
-## Test Delivery
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/users/register` | Registrar un nuevo usuario |
 
-- Deliver your source code by forking the repository provided for the test.
-- The name of the branch must follow the following convention: `test/person-name`.
-- Add clear instructions on how to run and test the application to the end of the `README.md` file.
-- As well as the necessary documentation to test the API with sample requests.
+**Ejemplo de solicitud:**
+```json
+{
+  "name": "Usuario Ejemplo",
+  "email": "usuario@ejemplo.com",
+  "password": "contraseña"
+}
+```
 
-Good luck and we look forward to reviewing your work!
+### Tareas (requieren autenticación)
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/tasks` | Listar todas las tareas (con paginación) |
+| GET | `/tasks?status=pending` | Filtrar tareas por estado |
+| GET | `/tasks/:id` | Obtener una tarea por ID |
+| POST | `/tasks` | Crear una nueva tarea |
+| PUT | `/tasks/:id` | Actualizar una tarea existente |
+| DELETE | `/tasks/:id/soft` | Eliminar una tarea (soft delete) |
+| DELETE | `/tasks/:id/permanent` | Eliminar una tarea permanentemente |
+| PUT | `/tasks/:id/restore` | Restaurar una tarea eliminada |
+
+**Ejemplo para crear una tarea:**
+```json
+{
+  "title": "Completar documentación",
+  "description": "Finalizar la documentación del proyecto"
+}
+```
+
+## Estructura del proyecto
+
+```
+src/
+├── auth/               # Autenticación y seguridad
+├── cache/              # Configuración de caché Redis
+├── config/             # Configuraciones de la aplicación
+├── database/           # Migraciones y configuración de BD
+├── tasks/              # Módulo de tareas (controladores, servicios, etc.)
+├── users/              # Módulo de usuarios
+└── app.module.ts       # Módulo principal
+```
+
+## Pruebas
+
+```bash
+# Pruebas unitarias
+npm run test
+
+# Pruebas e2e
+npm run test:e2e
+
+# Cobertura de pruebas
+npm run test:cov
+```
+
+## Despliegue en producción
+
+Para desplegar en producción, puedes usar el Dockerfile incluido:
+
+```bash
+# Construir la imagen
+docker build -t nestjs-tasks-api .
+
+# Ejecutar el contenedor
+docker run -p 3000:3000 --env-file .env nestjs-tasks-api
+```
+
+## Licencia
+
+[MIT](LICENSE)
