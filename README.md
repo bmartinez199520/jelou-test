@@ -68,20 +68,6 @@ npm run start:prod
 
 ## Endpoints de la API
 
-### Autenticación
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/auth/login` | Iniciar sesión y obtener token JWT |
-
-**Ejemplo de solicitud:**
-```json
-{
-  "email": "usuario@ejemplo.com",
-  "password": "contraseña"
-}
-```
-
 ### Usuarios
 
 | Método | Ruta | Descripción |
@@ -92,6 +78,20 @@ npm run start:prod
 ```json
 {
   "name": "Usuario Ejemplo",
+  "email": "usuario@ejemplo.com",
+  "password": "contraseña"
+}
+```
+
+### Autenticación
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/auth/login` | Iniciar sesión y obtener token JWT |
+
+**Ejemplo de solicitud:**
+```json
+{
   "email": "usuario@ejemplo.com",
   "password": "contraseña"
 }
